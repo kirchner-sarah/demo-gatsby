@@ -1,7 +1,7 @@
-import * as React from "react";
-import { graphql } from "gatsby"
-import Layout from "../components/layout";
-import Seo from "../components/seo";
+import * as React from 'react';
+import { graphql } from 'gatsby';
+import Layout from '../components/layout';
+import Seo from '../components/seo';
 
 export interface BlogPageProps {
   data: any;
@@ -10,29 +10,36 @@ export interface BlogPageProps {
 const BlogPage: React.FC<BlogPageProps> = ({ data }) => {
   return (
     <Layout pageTitle="Blog Page">
-      <ul>
-        {
-          data.allFile.nodes.map((node: any) => (
-            <li key={node.name}>
-              {node.name}
-            </li>
-          ))
-        }
-      </ul>
+      {
+        data.allMdx.nodes.map((node: any) => (
+          <article key={node.id} className="blog-post">
+            <h2>{node.frontmatter.title}</h2>
+            <p><strong>Author:</strong> {node.frontmatter.author}</p>
+            <p><strong>Date:</strong> {node.frontmatter.date}</p>
+            <p>{node.excerpt}</p>
+          </article>
+        ))
+      }
     </Layout>
   );
 };
 
 export const query = graphql`
   query {
-    allFile {
+    allMdx {
       nodes {
-        name
+        frontmatter {
+          date(formatString: "DD.MM.YYYY")
+          title
+          author
+        }
+        id
+        excerpt
       }
     }
   }
 `;
 
-export const Head = () => <Seo title="Blog Page" />;
+export const Head = () => <Seo title="Blog Page"/>;
 
 export default BlogPage;
